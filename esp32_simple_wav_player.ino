@@ -1,4 +1,6 @@
 #include "audiodata.h"  // wav data with header 
+// Audio dac 
+#include <driver/dac.h>
 
 //wav parameter
 uint32_t chunkSize;
@@ -17,7 +19,8 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println("start");
-  sigmaDeltaAttachPin(25,0); //attach pin 25 to channel 0 (other pin is also OK)
+  // sigmaDeltaAttachPin(14,0); //attach pin 25 to channel 0 (other pin is also OK)
+  dac_output_enable(DAC_CHANNEL_1); // use DAC_CHANNEL_1 (pin 25 fixed)
 }
 
 int play(const unsigned char *audio, uint32_t length ) {
@@ -62,8 +65,9 @@ int play(const unsigned char *audio, uint32_t length ) {
 
   //set playing parameter
   delayus = 1000000/sampleRate;  // 8000Hz = 125 , 16kHz = 62 ...
-  sigmaDeltaSetup(0, sampleRate); // setup channel 0 with sampleRate
-  sigmaDeltaWrite(0, 0); //initialize channel 0 to off 
+  //sigmaDeltaSetup(0, sampleRate); // setup channel 0 with sampleRate
+  //sigmaDeltaSetup(0, 22050); // setup channel 0 with sampleRate
+  //sigmaDeltaWrite(0, 0); //initialize channel 0 to off 
 
   //play wav data
   while (count < length) {
@@ -78,10 +82,13 @@ int play(const unsigned char *audio, uint32_t length ) {
       count += sizeof(data8);
       if (numChannels == 2) count += sizeof(data8);
     }
-    sigmaDeltaWrite(0, left);  
+    //sigmaDeltaWrite(0, left);  
+    dac_output_voltage(DAC_CHANNEL_1, left);
+    
     ets_delay_us(delayus);
   }
-  sigmaDeltaWrite(127, 0);
+  //sigmaDeltaWrite(127, 0);
+  dac_output_voltage(DAC_CHANNEL_1, 127);
 
 }
 
