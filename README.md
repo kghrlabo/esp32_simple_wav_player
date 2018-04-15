@@ -17,6 +17,8 @@ ESP32に定型文をしゃべらせるシンプルな Wev Playerで、時計や�
 
 - ESP32 x 1
 - Speaker x 1
+- (2KΩ 半固定抵抗、0.1μ コンデンサ)
+
 
 ## Usage
 
